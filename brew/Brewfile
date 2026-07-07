@@ -1,0 +1,181 @@
+tap "antoniorodr/cronboard"
+tap "cloudflare/cloudflare"
+tap "felixkratz/formulae", "https://github.com/FelixKratz/homebrew-formulae"
+tap "mongodb/brew"
+tap "nickustinov/tap"
+tap "peonping/tap", "https://github.com/PeonPing/homebrew-tap"
+tap "sanyam-g/switch", "https://github.com/Sanyam-G/homebrew-switch"
+# Microsoft Azure CLI 2.0
+brew "azure-cli"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Cloudflare Tunnel client (formerly Argo Tunnel)
+brew "cloudflared"
+# Modern, maintained replacement for ls
+brew "eza"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
+# Command-line tools for fly.io services
+brew "flyctl"
+# Fast and simple Node.js version manager
+brew "fnm"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Tcl/Tk UI for the git revision control system
+brew "git-gui"
+# Tools and libraries to manipulate images in select formats
+brew "imagemagick"
+# Implementation of the file(1) command
+brew "libmagic"
+# Library to render SVG files using Cairo
+brew "librsvg"
+# Simple tool to make locally trusted development certificates
+brew "mkcert"
+# Deep clean and optimize your Mac
+brew "mole"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node@22"
+# Libraries for security-enabled client and server applications
+brew "nss"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# AI coding agent, built for the terminal
+brew "opencode"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# CLI proxy to minimize LLM token consumption
+brew "rtk"
+# Terminal multiplexer
+brew "tmux"
+# Upgrade all the things
+brew "topgrade"
+# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
+# Internet file retriever
+brew "wget"
+# Feature-rich command-line audio/video downloader
+brew "yt-dlp"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# Browse, search and analyse your past AI coding sessions
+cask "agentsview"
+# Multi-track audio editor and recorder
+cask "audacity"
+# Privacy-focused note-taking app
+cask "beaver-notes"
+# Anthropic's official Claude AI desktop app
+cask "claude"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# Brings the power of Copilot coding agent directly to your terminal
+cask "copilot-cli"
+# Tool to run Windows software
+cask "crossover"
+# Voice and text chat software
+cask "discord"
+# Per-application volume mixer, equalizer, and audio router
+cask "finetune"
+# Web browser
+cask "firefox"
+cask "font-google-sans-code", args: { fontdir: "/Library/Fonts" }
+cask "font-jetbrains-maple-mono"
+cask "font-jetbrains-mono"
+cask "font-lexend"
+cask "font-lilex-nerd-font"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty"
+# Native macOS Virtual Machines for Apple Silicon
+cask "ghostvm"
+# Git interface focused on visual interaction
+cask "gitup-app"
+# Code editor focused on stability, without AI, subscriptions, or telemetry
+cask "gram"
+# Graphically shows disk usage within a file system
+cask "grandperspective"
+# Chromium-based web browser
+cask "helium-browser"
+# Free and open-source media player
+cask "iina"
+# A tiny, fast scratchpad and clipboard manager for Mac
+cask "nickustinov/tap/itsypad"
+# JetBrains tools manager
+cask "jetbrains-toolbox"
+# Menu bar manager
+cask "jordanbaird-ice@beta"
+# Utility for comparing and merging files and directories
+cask "kdiff3"
+# Preview and audit Kindle eBooks
+cask "kindle-previewer"
+# GPU-based terminal emulator
+cask "kitty"
+# Automatically quit apps when their last window is closed
+cask "last-window-quits"
+# Discover, download, and run local LLMs
+cask "lm-studio"
+# Trims video and audio files losslessly
+cask "losslesscut"
+# Open-source firewall to block unknown outgoing connections
+cask "lulu"
+# Mouse utility to add gesture functions and smooth scrolling to 3rd party mice
+cask "mac-mouse-fix"
+# Visual diff and merge tool
+cask "meld"
+# Middle-click and middle-drag via three-finger trackpad gestures
+cask "middledrag"
+# Interactive tool for analyzing MongoDB data
+cask "mongodb-compass-isolated-edition"
+# Web browser focused on privacy and on minimizing tracking and fingerprinting
+cask "mullvad-browser"
+# Free and open-source RSS reader
+cask "netnewswire"
+# Open-source software for live streaming and screen recording
+cask "obs"
+# Audio editor
+cask "ocenaudio"
+# Replacement for Docker Desktop
+cask "orbstack"
+# OpenVPN client
+cask "pritunl"
+# GUI for streamlined Redis application development
+cask "redis-insight"
+# Web browser
+cask "sigmaos"
+# Team communication and collaboration software
+cask "slack"
+# Launcher & command palette
+cask "sol"
+# Video game digital distribution service
+cask "steam"
+# Control windows and applications right from your trackpad
+cask "swish"
+# Open-source BitTorrent client
+cask "transmission"
+# Binary releases of VS Code without MS branding/telemetry/licensing
+cask "vscodium"
+# Native desktop client for WhatsApp
+cask "whatsapp"
+# Multiplayer code editor
+cask "zed"
+vscode "anthropic.claude-code"
+vscode "bradlc.vscode-tailwindcss"
+vscode "esbenp.prettier-vscode"
+vscode "fullstacklabxd.matcha-ceremony-theme"
+vscode "ms-python.debugpy"
+vscode "ms-python.python"
+vscode "ms-python.vscode-python-envs"
+vscode "oxc.oxc-vscode"
+vscode "prisma.prisma"
+uv "claude-monitor"
+npm "copilot-api"
+npm "corepack"
+npm "fallow"
+npm "generator-office"
+npm "openwhip"
+npm "percollate"
+npm "pnpm"
+npm "sloc"
+npm "yo"
