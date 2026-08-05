@@ -82,12 +82,10 @@ grep -qF "$shellenv_line" "$HOME/.zprofile" || printf '\n%s\n' "$shellenv_line" 
 
 log "Installing Homebrew packages and applications"
 brew bundle --file=/dev/stdin <<'BREWFILE'
-brew "azure-cli"
 brew "bat"
 brew "eza"
 brew "fd"
 brew "ffmpeg"
-brew "flyctl"
 brew "fnm"
 brew "fzf"
 brew "gh"
