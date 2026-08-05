@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+# One-file macOS setup. Safe to run more than once.
+set -euo pipefail
+
+[[ "$(uname -s)" == "Darwin" ]] || { echo "This setup is for macOS only." >&2; exit 1; }
+log() { printf '\n==> %s\n' "$*"; }
+
+log "Requesting administrator access"
+sudo -v
+
+if ! xcode-select -p >/dev/null 2>&1; then
+  log "Installing Xcode Command Line Tools"
+  xcode-select --install
+  echo "Finish the installation, then run this script again."
+  exit 0
+fi
+
+log "Configuring macOS"
+defaults write NSGlobalDomain KeyRepeat -int 1                              # Use the fastest key-repeat rate.
+defaults write NSGlobalDomain InitialKeyRepeat -int 15                      # Shorten the delay before repeating.
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false          # Repeat held keys instead of showing accents.
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false # Disable spelling autocorrection.
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false # Disable automatic capitalization.
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false # Disable double-space periods.
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false # Keep typed hyphens unchanged.
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false # Keep typed quotes unchanged.
+
+hotkeys="$HOME/Library/Preferences/com.apple.symbolichotkeys.plist"          # Locate the global keyboard-shortcut preferences.
+for key in 64 65; do                                                        # Update Spotlight and Finder search shortcuts.
+  # Disable the existing shortcut, or create its disabled flag if missing.
+  /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:$key:enabled false" "$hotkeys" 2>/dev/null \
+    || /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:$key:enabled bool false" "$hotkeys" 2>/dev/null \
+    || true
+done
+sudo mdutil -a -i off >/dev/null                                           # Disable Spotlight indexing on every volume.
+
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true # Enable tap-to-click for external trackpads.
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1 # Enable tap-to-click for the current Mac.
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1            # Enable tap-to-click globally.
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true        # Enable tap-to-click for the built-in trackpad.
+
+defaults write com.apple.dock persistent-apps -array                        # Remove every pinned Dock application.
+defaults write com.apple.dock show-recents -bool false                      # Hide recently used Dock applications.
+defaults write com.apple.dock autohide -bool true                           # Automatically hide the Dock.
+defaults write com.apple.dock autohide-time-modifier -float 0               # Remove the Dock hide/show animation.
+defaults write com.apple.dock autohide-delay -float 0                       # Show the Dock without a hover delay.
+killall Dock >/dev/null 2>&1 || true                                        # Reload the Dock preferences.
+killall SystemUIServer >/dev/null 2>&1 || true                              # Reload menu-bar and shortcut preferences.
+
+if [[ ! -d "${ZSH:-$HOME/.oh-my-zsh}" ]]; then
+  log "Installing Oh My Zsh"
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    "" --unattended
+else
+  log "Oh My Zsh is already installed"
+fi
+
+if ! command -v brew >/dev/null 2>&1; then
+  for prefix in /opt/homebrew /usr/local; do
+    if [[ -x "$prefix/bin/brew" ]]; then
+      eval "$("$prefix/bin/brew" shellenv)"
+      break
+    fi
+  done
+fi
+
+if ! command -v brew >/dev/null 2>&1; then
+  log "Installing Homebrew"
+  NONINTERACTIVE=1 /bin/bash -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  [[ -x /opt/homebrew/bin/brew ]] \
+    && eval "$(/opt/homebrew/bin/brew shellenv)" \
+    || eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+brew_bin="$(command -v brew)"
+shellenv_line="eval \"\$(${brew_bin} shellenv)\""
+touch "$HOME/.zprofile"
+grep -qF "$shellenv_line" "$HOME/.zprofile" || printf '\n%s\n' "$shellenv_line" >> "$HOME/.zprofile"
+
+log "Installing Homebrew packages and applications"
+brew bundle --file=/dev/stdin <<'BREWFILE'
+brew "azure-cli"
+brew "bat"
+brew "eza"
+brew "fd"
+brew "ffmpeg"
+brew "flyctl"
+brew "fnm"
+brew "fzf"
+brew "gh"
+brew "imagemagick"
+brew "libmagic"
+brew "librsvg"
+brew "mkcert"
+brew "nss"
+brew "pipx"
+brew "ripgrep"
+brew "rtk"
+brew "tmux"
+brew "topgrade"
+brew "uv"
+brew "wget"
+brew "yt-dlp"
+brew "zoxide"
+
+cask "font-jetbrains-maple-mono"
+cask "font-jetbrains-mono"
+cask "font-lexend"
+cask "font-lilex-nerd-font"
+cask "helium-browser"
+cask "iina"
+cask "lm-studio"
+cask "mac-mouse-fix"
+cask "netnewswire"
+cask "orbstack"
+cask "swish"
+cask "zed"
+
+BREWFILE
+
+log "Setup complete"
+echo "Log out and back in for the keyboard and Spotlight changes to fully apply."

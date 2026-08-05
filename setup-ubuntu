@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+# One-file Ubuntu VM setup. Safe to run more than once.
+set -euo pipefail
+
+[[ -r /etc/os-release ]] || { echo "Cannot identify this operating system." >&2; exit 1; }
+# shellcheck disable=SC1091
+source /etc/os-release
+if [[ "${ID:-}" != "ubuntu" && "${ID_LIKE:-}" != *ubuntu* ]]; then
+  echo "This setup is for Ubuntu only." >&2
+  exit 1
+fi
+
+log() { printf '\n==> %s\n' "$*"; }
+
+log "Installing Ubuntu prerequisites"
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  build-essential curl file git procps zsh
+
+if [[ ! -d "${ZSH:-$HOME/.oh-my-zsh}" ]]; then
+  log "Installing Oh My Zsh"
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    "" --unattended
+else
+  log "Oh My Zsh is already installed"
+fi
+
+if ! command -v brew >/dev/null 2>&1 && [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+if ! command -v brew >/dev/null 2>&1; then
+  log "Installing Homebrew"
+  NONINTERACTIVE=1 /bin/bash -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+brew_bin="$(command -v brew)"
+shellenv_line="eval \"\$(${brew_bin} shellenv)\""
+for profile in "$HOME/.profile" "$HOME/.zprofile"; do
+  touch "$profile"
+  grep -qF "$shellenv_line" "$profile" || printf '\n%s\n' "$shellenv_line" >> "$profile"
+done
+
+log "Installing CLI tools"
+brew bundle --file=/dev/stdin <<'BREWFILE'
+brew "azure-cli"
+brew "bat"
+brew "cloudflared"
+brew "eza"
+brew "fd"
+brew "ffmpeg"
+brew "flyctl"
+brew "fnm"
+brew "fzf"
+brew "gh"
+brew "imagemagick"
+brew "libmagic"
+brew "librsvg"
+brew "mkcert"
+brew "node@22"
+brew "nss"
+brew "opencode"
+brew "pipx"
+brew "ripgrep"
+brew "rtk"
+brew "tmux"
+brew "topgrade"
+brew "uv"
+brew "wget"
+brew "zoxide"
+
+uv "claude-monitor"
+
+npm "copilot-api"
+npm "corepack"
+npm "fallow"
+npm "generator-office"
+npm "openwhip"
+npm "percollate"
+npm "pnpm"
+npm "sloc"
+npm "yo"
+BREWFILE
+
+log "Setup complete"
+echo "Start a new shell to load Homebrew into your environment."
