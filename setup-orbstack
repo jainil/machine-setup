@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Create and provision an OrbStack Ubuntu machine without racing its user setup.
+set -euo pipefail
+
+usage() {
+  echo "Usage: $0 MACHINE_NAME [IMAGE]" >&2
+}
+
+[[ $# -ge 1 && $# -le 2 ]] || { usage; exit 2; }
+[[ "$(uname -s)" == "Darwin" ]] || {
+  echo "OrbStack setup must run on macOS." >&2
+  exit 1
+}
+command -v orb >/dev/null 2>&1 || {
+  echo "OrbStack's 'orb' command is not installed." >&2
+  exit 1
+}
+
+machine_name="$1"
+image="${2:-ubuntu}"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cloud_config="$script_dir/setup-ubuntu.orbstack.cloud-config.yaml"
+
+orb create "$image" "$machine_name" -c "$cloud_config"
+orb -m "$machine_name" sudo cloud-init status --wait
+orb -m "$machine_name" /opt/machine-setup/setup-ubuntu --skip-system-packages
+
+echo "OrbStack machine '$machine_name' is ready."

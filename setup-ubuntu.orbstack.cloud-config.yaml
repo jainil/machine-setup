@@ -1,0 +1,23 @@
+#cloud-config
+
+package_update: true
+packages:
+  - build-essential
+  - curl
+  - file
+  - git
+  - procps
+  - sudo
+
+runcmd:
+  - |
+    set -eu
+    if [ -e /opt/machine-setup ] && [ ! -d /opt/machine-setup/.git ]; then
+      echo "/opt/machine-setup exists but is not a Git repository" >&2
+      exit 1
+    fi
+    if [ ! -d /opt/machine-setup/.git ]; then
+      git clone --depth 1 --branch main https://github.com/jainil/machine-setup.git /opt/machine-setup
+    fi
+
+final_message: "OrbStack system provisioning finished after $UPTIME seconds"

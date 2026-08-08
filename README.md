@@ -37,4 +37,25 @@ cloud-init status --wait
 If provisioning fails, inspect `/var/log/cloud-init.log` and
 `/var/log/cloud-init-output.log`.
 
-Both scripts are safe to rerun and may prompt for `sudo` access.
+### OrbStack
+
+Use the OrbStack wrapper instead of passing the provider-neutral cloud-config
+directly:
+
+```bash
+./setup-orbstack MACHINE_NAME
+```
+
+Pass an image as the second argument to select a specific Ubuntu release:
+
+```bash
+./setup-orbstack MACHINE_NAME ubuntu:noble
+```
+
+The wrapper first creates the machine with root-only cloud-init provisioning,
+waits for cloud-init to finish, and then runs the user-scoped setup. OrbStack can
+replace Ubuntu's temporary `ubuntu` account with your macOS user before that
+setup starts, avoiding the `userdel: user ubuntu is currently used by process`
+race during machine creation.
+
+The setup scripts are safe to rerun and may prompt for `sudo` access.
