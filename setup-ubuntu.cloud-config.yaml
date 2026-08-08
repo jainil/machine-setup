@@ -1,0 +1,32 @@
+#cloud-config
+
+users:
+  - default
+
+package_update: true
+packages:
+  - build-essential
+  - curl
+  - file
+  - git
+  - procps
+  - sudo
+
+runcmd:
+  - |
+    set -eu
+    setup_user="$(cloud-init query system_info.default_user.name)"
+    if [ -z "$setup_user" ]; then
+      echo "cloud-init did not report a default user" >&2
+      exit 1
+    fi
+    if [ -e /opt/machine-setup ] && [ ! -d /opt/machine-setup/.git ]; then
+      echo "/opt/machine-setup exists but is not a Git repository" >&2
+      exit 1
+    fi
+    if [ ! -d /opt/machine-setup/.git ]; then
+      git clone --depth 1 --branch main https://github.com/jainil/machine-setup.git /opt/machine-setup
+    fi
+    sudo --login --user="$setup_user" -- /opt/machine-setup/setup-ubuntu --skip-system-packages
+
+final_message: "Ubuntu development environment setup finished after $UPTIME seconds"

@@ -3,6 +3,18 @@
 # One-file Ubuntu VM setup. Safe to run more than once.
 set -euo pipefail
 
+usage() {
+  echo "Usage: $0 [--skip-system-packages]" >&2
+}
+
+skip_system_packages=false
+case "${1:-}" in
+  "") ;;
+  --skip-system-packages) skip_system_packages=true ;;
+  *) usage; exit 2 ;;
+esac
+[[ $# -le 1 ]] || { usage; exit 2; }
+
 [[ -r /etc/os-release ]] || { echo "Cannot identify this operating system." >&2; exit 1; }
 # shellcheck disable=SC1091
 source /etc/os-release
@@ -11,12 +23,19 @@ if [[ "${ID:-}" != "ubuntu" && "${ID_LIKE:-}" != *ubuntu* ]]; then
   exit 1
 fi
 
+[[ $EUID -ne 0 ]] || {
+  echo "Run this setup as the login user, not root." >&2
+  exit 1
+}
+
 log() { printf '\n==> %s\n' "$*"; }
 
-log "Installing Ubuntu prerequisites"
-sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  build-essential curl file git procps
+if [[ $skip_system_packages == false ]]; then
+  log "Installing Ubuntu prerequisites"
+  sudo apt-get update
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    build-essential curl file git procps
+fi
 
 if [[ ! -d "${OSH:-$HOME/.oh-my-bash}" ]]; then
   log "Installing Oh My Bash"
