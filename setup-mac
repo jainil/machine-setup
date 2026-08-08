@@ -119,5 +119,10 @@ cask "zed"
 
 BREWFILE
 
+log "Configuring fzf shell integration"
+fzf_init_line='source <(fzf --zsh)'
+touch "$HOME/.zshrc"
+grep -qF "$fzf_init_line" "$HOME/.zshrc" || printf '\n%s\n' "$fzf_init_line" >> "$HOME/.zshrc"
+
 log "Setup complete"
 echo "Log out and back in for the keyboard and Spotlight changes to fully apply."

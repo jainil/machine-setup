@@ -68,6 +68,10 @@ brew "zoxide"
 
 BREWFILE
 
+log "Configuring fzf shell integration"
+fzf_init_line='eval "$(fzf --bash)"'
+grep -qF "$fzf_init_line" "$HOME/.bashrc" || printf '\n%s\n' "$fzf_init_line" >> "$HOME/.bashrc"
+
 log "Configuring Node.js 24 and pnpm"
 fnm_env_line='eval "$(fnm env --use-on-cd --shell bash)"'
 grep -qF "$fnm_env_line" "$HOME/.bashrc" || printf '\n%s\n' "$fnm_env_line" >> "$HOME/.bashrc"
