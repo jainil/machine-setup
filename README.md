@@ -18,8 +18,7 @@ developer packages. Log out and back in afterward to apply all preferences.
 ./setup-ubuntu
 ```
 
-Installs required APT packages, Oh My Zsh, Homebrew, and cross-platform CLI and
-developer packages. It skips macOS preferences, GUI applications, fonts, and
-editor extensions.
+Installs required APT packages, Oh My Bash, Homebrew, cross-platform CLI and
+developer packages, Node.js 24 through fnm, and pnpm.
 
 Both scripts are safe to rerun and may prompt for `sudo` access.

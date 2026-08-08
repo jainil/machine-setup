@@ -16,15 +16,15 @@ log() { printf '\n==> %s\n' "$*"; }
 log "Installing Ubuntu prerequisites"
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  build-essential curl file git procps zsh
+  build-essential curl file git procps
 
-if [[ ! -d "${ZSH:-$HOME/.oh-my-zsh}" ]]; then
-  log "Installing Oh My Zsh"
-  RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
-    "" --unattended
+if [[ ! -d "${OSH:-$HOME/.oh-my-bash}" ]]; then
+  log "Installing Oh My Bash"
+  bash -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" \
+    --unattended
 else
-  log "Oh My Zsh is already installed"
+  log "Oh My Bash is already installed"
 fi
 
 if ! command -v brew >/dev/null 2>&1 && [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
@@ -40,7 +40,7 @@ fi
 
 brew_bin="$(command -v brew)"
 shellenv_line="eval \"\$(${brew_bin} shellenv)\""
-for profile in "$HOME/.profile" "$HOME/.zprofile"; do
+for profile in "$HOME/.profile" "$HOME/.bashrc"; do
   touch "$profile"
   grep -qF "$shellenv_line" "$profile" || printf '\n%s\n' "$shellenv_line" >> "$profile"
 done
@@ -68,5 +68,17 @@ brew "zoxide"
 
 BREWFILE
 
+log "Configuring Node.js 24 and pnpm"
+fnm_env_line='eval "$(fnm env --use-on-cd --shell bash)"'
+grep -qF "$fnm_env_line" "$HOME/.bashrc" || printf '\n%s\n' "$fnm_env_line" >> "$HOME/.bashrc"
+
+eval "$(fnm env --use-on-cd --shell bash)"
+fnm install 24
+fnm default 24
+fnm use 24
+npm install --global corepack@latest
+corepack enable pnpm
+pnpm --version
+
 log "Setup complete"
-echo "Start a new shell to load Homebrew into your environment."
+echo "Start a new Bash shell to load Oh My Bash and Homebrew into your environment."
