@@ -21,19 +21,17 @@ defaults write NSGlobalDomain KeyRepeat -int 1                              # Us
 defaults write NSGlobalDomain InitialKeyRepeat -int 15                      # Shorten the delay before repeating.
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false          # Repeat held keys instead of showing accents.
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false # Disable spelling autocorrection.
+defaults write NSGlobalDomain NSAutomaticTextCompletionEnabled -bool false # Disable automatic text completion.
+defaults write NSGlobalDomain NSAutomaticInlinePredictionEnabled -bool false # Disable inline predictive text.
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false # Disable automatic capitalization.
 defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false # Disable double-space periods.
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false # Keep typed hyphens unchanged.
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false # Keep typed quotes unchanged.
 
-hotkeys="$HOME/Library/Preferences/com.apple.symbolichotkeys.plist"          # Locate the global keyboard-shortcut preferences.
-for key in 64 65; do                                                        # Update Spotlight and Finder search shortcuts.
-  # Disable the existing shortcut, or create its disabled flag if missing.
-  /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:$key:enabled false" "$hotkeys" 2>/dev/null \
-    || /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:$key:enabled bool false" "$hotkeys" 2>/dev/null \
-    || true
-done
-sudo mdutil -a -i off >/dev/null                                           # Disable Spotlight indexing on every volume.
+defaults write com.apple.lookup.shared LookupSuggestionsDisabled -bool true # Hide related content in Spotlight.
+defaults write com.apple.assistant.support "Search Queries Data Sharing Status" -int 2 # Opt out of improving Search.
+
+defaults write com.apple.finder CreateDesktop -bool false                  # Hide items on the desktop.
 
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true # Enable tap-to-click for external trackpads.
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1 # Enable tap-to-click for the current Mac.
@@ -45,8 +43,9 @@ defaults write com.apple.dock show-recents -bool false                      # Hi
 defaults write com.apple.dock autohide -bool true                           # Automatically hide the Dock.
 defaults write com.apple.dock autohide-time-modifier -float 0               # Remove the Dock hide/show animation.
 defaults write com.apple.dock autohide-delay -float 0                       # Show the Dock without a hover delay.
+defaults write com.apple.dock mru-spaces -bool false                        # Keep Spaces in their existing order.
 killall Dock >/dev/null 2>&1 || true                                        # Reload the Dock preferences.
-killall SystemUIServer >/dev/null 2>&1 || true                              # Reload menu-bar and shortcut preferences.
+killall Finder >/dev/null 2>&1 || true                                      # Reload the desktop preferences.
 
 if [[ ! -d "${ZSH:-$HOME/.oh-my-zsh}" ]]; then
   log "Installing Oh My Zsh"
